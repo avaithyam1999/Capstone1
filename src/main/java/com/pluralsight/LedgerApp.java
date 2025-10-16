@@ -12,6 +12,10 @@ public class LedgerApp {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"));
+        getUserPassAndRunApp(scanner, running, buffReader);
+    }
+
+    private static void getUserPassAndRunApp(Scanner scanner, boolean running, BufferedReader buffReader) throws IOException {
         String realPassword = "password123four";
         String passwordHint = "No hints for you";
         int maxAttempts = 3;
@@ -19,14 +23,6 @@ public class LedgerApp {
         boolean accessGranted = false;
 
         System.out.println("Welcome to ^DolFin^, your personal finance tracker\n");
-
-
-        getUserPasswordAndRun(maxAttempts, passwordAttempts, accessGranted, scanner, passwordHint, realPassword, running, buffReader);
-
-
-    }
-
-    private static void getUserPasswordAndRun(int maxAttempts, int passwordAttempts, boolean accessGranted, Scanner scanner, String passwordHint, String realPassword, boolean running, BufferedReader buffReader) throws IOException {
         while (maxAttempts > passwordAttempts && !accessGranted) {
             System.out.println("Please enter your password(case sensitive). Or ask for a hint: \n");
             String userPasswordEntry = scanner.nextLine();
@@ -45,6 +41,7 @@ public class LedgerApp {
             System.out.println("Too many failed attempts. Locking down program now");
         }
     }
+
 
     private static void runMainApplication(boolean running, Scanner scanner, BufferedReader buffReader) throws IOException {
         while (running) {
