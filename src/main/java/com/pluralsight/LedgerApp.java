@@ -12,7 +12,6 @@ public class LedgerApp {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"));
-//        getUserPassAndRunApp();
         if (getUserPassAndRunApp(scanner)) {
             runMainApplication(running, scanner, buffReader);
         }
@@ -55,7 +54,7 @@ public class LedgerApp {
                     1. Record a deposit
                     2. Record a Payment
                     3. Access your Ledger
-                    4. Exit FinApp
+                    4. Exit DolFin
                     """);
 
             byte userChoice = (scanner.nextByte());
@@ -78,7 +77,7 @@ public class LedgerApp {
                             3. Show only Payments
                             4. View Reports
                             5. Exit to Main Menu
-                            6. Exit FinApp
+                            6. Exit DolFin
                             """);
                         byte userLedgerOption = scanner.nextByte();
                         switch (userLedgerOption) {
@@ -138,17 +137,47 @@ public class LedgerApp {
                                                     1. Search by Date Range
                                                     2. Search by Description
                                                     3. Search by Amount
-                                                    4. Exit Custom Search
+                                                    4. Return to Ledger Menu
+                                                    5. Return to Main Menu
+                                                    6. Exit Program
                                                     """);
-                                            byte userCustomSearch = scanner.nextByte();
-                                            switch (userCustomSearch) {
-                                                case 1 -> {
-                                                    System.out.println("Enter Start Date (yyyy-MM-dd): ");
-                                                    LocalDate startDate = LocalDate.parse(scanner.nextLine());
-                                                    System.out.println();
+                                            byte userCustomSearchChoice = scanner.nextByte();
+                                            scanner.nextLine();
+                                            boolean customSearchRunning = true;
+
+                                            while (customSearchRunning) {
+                                                ArrayList<Transaction> transactions = loadTransactions();
+                                                switch (userCustomSearchChoice) {
+                                                    case 1 -> {
+                                                        searchByDate(scanner, transactions);
+                                                    }
+                                                    case 2 -> {
+                                                        searchByDescription(scanner, transactions);
+                                                    }
+                                                    case 3 -> {
+                                                        searchByAmount(scanner, transactions);
+                                                    }
+                                                    case 4 -> {
+                                                        System.out.println("Returning to Ledger Menu");
+                                                        customSearchRunning = false;
+                                                    }
+                                                    case 5 -> {
+                                                        System.out.println("Returning to Main Menu");
+                                                        customSearchRunning = false;
+                                                        ledgerRunning = false;
+                                                    }
+                                                    case 6 -> {
+                                                        System.out.println("Exiting DolFin");
+                                                        customSearchRunning = false;
+                                                        ledgerRunning = false;
+                                                        running = false;
+                                                    }
+                                                    default -> {
+                                                        System.out.println("That's an invalid entry.");
+                                                    }
                                                 }
                                             }
-                                            reportsRunning = false;
+
                                         }
                                         case 7 -> {
                                             reportsRunning = false;
@@ -177,6 +206,73 @@ public class LedgerApp {
                     System.out.println("Number is invalid or out of range");
                 }
             }
+        }
+    }
+
+    private static void searchByAmount(Scanner scanner, ArrayList<Transaction> transactions) {
+        System.out.println("Enter Amount to search for: ");
+        double searchAmount = scanner.nextDouble();
+        scanner.nextLine();
+
+        boolean transactionFound = false;
+        int transactionCount = 0;
+
+        for (Transaction item : transactions) {
+            if (item.getAmount() == searchAmount) {
+                System.out.println(item);
+                transactionFound = true;
+                transactionCount ++;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("\n%d transaction(s) found!\n", transactionCount);
+        } else {
+            System.out.println("\nNo transactions found for that amount.\n");
+        }
+    }
+
+    private static void searchByDescription(Scanner scanner, ArrayList<Transaction> transactions) {
+        System.out.println("Enter Description Keyword");
+        String descriptionKeyWord = scanner.nextLine().toLowerCase();
+        boolean transactionFound = false;
+        int transactionCount = 0;
+
+        for (Transaction item : transactions) {
+            if (item.getDescription().toLowerCase().contains(descriptionKeyWord)) {
+                System.out.println(item);
+                transactionFound = true;
+                transactionCount ++;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("\n%d transaction(s) found!\n", transactionCount);
+        } else {
+            System.out.println("\nNo transactions found for that description.\n");
+        }
+    }
+
+    private static void searchByDate(Scanner scanner, ArrayList<Transaction> transactions) {
+        System.out.println("Enter Start Date (yyyy-MM-dd): ");
+        String startDateString = scanner.nextLine();
+        LocalDate startDate = LocalDate.parse(startDateString);
+        System.out.println("Enter End Date (yyyy-MM-dd): ");
+        String endDateString = scanner.nextLine();
+        LocalDate endDate = LocalDate.parse(endDateString);
+
+        boolean transactionFound = false;
+        int transactionCount = 0;
+
+        for (Transaction item : transactions) {
+            if (item.getDate().isAfter(startDate) && item.getDate().isBefore(endDate)) {
+                System.out.println(item);
+                transactionFound = true;
+                transactionCount ++;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("\n%d transaction(s) found!\n", transactionCount);
+        } else {
+            System.out.println("\nNo transactions found for that date range.\n");
         }
     }
 
@@ -243,7 +339,7 @@ public class LedgerApp {
 
         System.out.printf("===Report for %s to %s===",startOfYear,now);
         for (Transaction item : transactions) {
-            if (item.getDate().isAfter(startOfYear) && item.getDate().isBefore(now)) {
+            if (item.getDate().isAfter(startOfYear)) {
                 System.out.println(item);
                 transactionTotal += item.getAmount();
                 transactionCount ++;
@@ -295,7 +391,7 @@ public class LedgerApp {
         System.out.printf("===Report for %s to %s\n", startOfMonth, now);
         for (Transaction item : transactions) {
             LocalDate transactionDate = item.getDate();
-            if (transactionDate.isAfter(startOfMonth) && transactionDate.isBefore(now)) {
+            if (transactionDate.isAfter(startOfMonth)) {
                 System.out.println(item);
                 transactionFound = true;
                 transactionCount ++;
