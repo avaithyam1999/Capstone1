@@ -12,12 +12,44 @@ public class LedgerApp {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"));
+        String realPassword = "password123four";
+        String passwordHint = "No hints for you";
+        int maxAttempts = 3;
+        int passwordAttempts = 0;
+        boolean accessGranted = false;
 
-        System.out.println("Welcome to ^FinApp^, your personal finance tracker");
+        System.out.println("Welcome to ^DolFin^, your personal finance tracker\n");
 
+
+        getUserPasswordAndRun(maxAttempts, passwordAttempts, accessGranted, scanner, passwordHint, realPassword, running, buffReader);
+
+
+    }
+
+    private static void getUserPasswordAndRun(int maxAttempts, int passwordAttempts, boolean accessGranted, Scanner scanner, String passwordHint, String realPassword, boolean running, BufferedReader buffReader) throws IOException {
+        while (maxAttempts > passwordAttempts && !accessGranted) {
+            System.out.println("Please enter your password(case sensitive). Or ask for a hint: \n");
+            String userPasswordEntry = scanner.nextLine();
+            if (userPasswordEntry.toLowerCase().contains("hint")) {
+                System.out.println(passwordHint);
+            } else if (!userPasswordEntry.equals(realPassword)) {
+                passwordAttempts++;
+                System.out.printf("Incorrect try again. %d attempts remain\n", maxAttempts - passwordAttempts);
+            } else {
+                System.out.println("Access Granted");
+                accessGranted = true;
+                runMainApplication(running, scanner, buffReader);
+            }
+        }
+        if (!accessGranted) {
+            System.out.println("Too many failed attempts. Locking down program now");
+        }
+    }
+
+    private static void runMainApplication(boolean running, Scanner scanner, BufferedReader buffReader) throws IOException {
         while (running) {
             System.out.println("""
-                    ===FinApp===
+                    ===DolFin===
                     Select an option:
                     1. Record a deposit
                     2. Record a Payment
@@ -35,7 +67,9 @@ public class LedgerApp {
                     addPayment(scanner);
                 }
                 case 3 -> {
-                    System.out.println("""
+                    boolean ledgerRunning = true;
+                    while (ledgerRunning) {
+                        System.out.println("""
                             ===Ledger===
                             Select an option:
                             1. Show all Entries
@@ -45,19 +79,19 @@ public class LedgerApp {
                             5. Exit to Main Menu
                             6. Exit FinApp
                             """);
-                    byte userLedgerOption = scanner.nextByte();
-                    switch (userLedgerOption) {
-                        case 1 -> {
-                            showAllEntries(buffReader);
-                        }
-                        case 2 -> {
-                            showDeposits();
-                        }
-                        case 3 -> {
-                            showPayments();
-                        }
-                        case 4 -> {
-                            System.out.println("""
+                        byte userLedgerOption = scanner.nextByte();
+                        switch (userLedgerOption) {
+                            case 1 -> {
+                                showAllEntries(buffReader);
+                            }
+                            case 2 -> {
+                                showDeposits();
+                            }
+                            case 3 -> {
+                                showPayments();
+                            }
+                            case 4 -> {
+                                System.out.println("""
                                     ===Reports===
                                     Select an Option to view by:
                                     1. Month to Date
@@ -65,62 +99,54 @@ public class LedgerApp {
                                     3. Year to Date
                                     4. Previous Year
                                     5. Search by Vendor
-                                    6. Go Back to Ledger Menu
+                                    6. Custom Search
+                                    7. Go Back to Ledger Menu
                                     """);
-                            byte userReportInput = scanner.nextByte();
-                            scanner.nextLine();
-
-                            switch (userReportInput) {
-                                case 1 -> {
-                                    ArrayList<Transaction> transactions = loadTransactions();
-                                    LocalDate now = LocalDate.now();
-                                    LocalDate startOfMonth = now.withDayOfMonth(1); //finds the first day of the current month
-                                    boolean transactionFound = false;
-                                    int transactionCount = 0;
-
-                                    System.out.printf("===Report for %s to %s\n", startOfMonth, now);
-                                    for (Transaction item : transactions) {
-                                        LocalDate transactionDate = item.getDate();
-                                        if (transactionDate.isAfter(startOfMonth) && transactionDate.isBefore(now)) {
-                                            System.out.println(item);
-                                            transactionFound = true;
-                                            transactionCount ++;
+                                byte userReportInput = scanner.nextByte();
+                                scanner.nextLine();
+                                boolean reportsRunning = true;
+                                while (reportsRunning) {
+                                    switch (userReportInput) {
+                                        case 1 -> {
+                                            showMonthToDateReport();
+                                            reportsRunning = false;
                                         }
-                                    }
-                                    if (transactionFound) {
-                                        System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfMonth, now);
-                                    } else {
-                                        System.out.printf("No transactions from from %s to %s\n",startOfMonth,now);
-                                    }
-                                }
-                                case 2 -> {
-                                    ArrayList<Transaction> transactions = loadTransactions();
-                                    LocalDate now = LocalDate.now();
-                                    LocalDate startOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1); //finds the first day of current month minus 1
-                                    LocalDate endOfPreviousMonth = now.withDayOfMonth(1).minusDays(1); // finds the last day by subtracting current day by 1
-                                    boolean transactionFound = false;
-                                    int transactionCount = 0;
-
-                                    System.out.printf("===Report for %s to %s===\n",startOfPreviousMonth,endOfPreviousMonth);
-                                    for (Transaction item : transactions) {
-                                        if (item.getDate().isAfter(startOfPreviousMonth) && item.getDate().isBefore(endOfPreviousMonth)) {
-                                            System.out.println(item);
-                                            transactionFound = true;
-                                            transactionCount ++;
+                                        case 2 -> {
+                                            showPreviousMonthReport();
+                                            reportsRunning = false;
                                         }
-                                    }
-                                    if (transactionFound) {
-                                        System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfPreviousMonth, endOfPreviousMonth);
-                                    } else {
-                                        System.out.printf("No transactions from from %s to %s\n",startOfPreviousMonth,endOfPreviousMonth);
-                                    }
-                                }
-                                case 3 -> {
+                                        case 3 -> {
+                                            showYTDReport();
+                                            reportsRunning = false;
+                                        }
+                                        case 4 -> {
+                                            showPreviousYearReport();
+                                            reportsRunning = false;
+                                        }
+                                        case 5 -> {
+                                            getSearchByVendor(scanner);
+                                            reportsRunning = false;
+                                        }
+                                        case 6 -> {
 
+                                        }
+                                        case 7 -> {
+                                            reportsRunning = false;
+                                        }
+                                        default -> System.out.println("You didn't enter a proper value");
+                                    }
                                 }
                             }
+                            case 5 -> {
+                                System.out.println("Going back to DolFin Main Menu");
+                                ledgerRunning = false;
+                            }
+                            case 6 -> {
+                                System.out.println("Thanks for using this awesome app! Have a great day and goodbye!");
+                                ledgerRunning = false;
+                                running = false;
+                            }
                         }
-                        default -> System.out.println("You didn't enter a proper value");
                     }
                 }
                 case 4 -> {
@@ -131,6 +157,136 @@ public class LedgerApp {
                     System.out.println("Number is invalid or out of range");
                 }
             }
+        }
+    }
+
+    private static void getSearchByVendor(Scanner scanner) {
+        ArrayList<Transaction> transactions = loadTransactions();
+        double transactionTotal = 0;
+        int transactionCount = 0;
+        boolean transactionFound = false;
+
+        System.out.println("===Search By Vendor===\n");
+        System.out.println("Enter vendor name: ");
+        String userVendorName = scanner.nextLine().toLowerCase();
+        for (Transaction item : transactions) {
+            if (item.getVendor().toLowerCase().contains(userVendorName)) {
+                System.out.println(item);
+                transactionTotal += item.getAmount();
+                transactionCount++;
+                transactionFound = true;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("%d transactions found for vendor: %s \nTotal of transactions: $%.2f\n", transactionCount, userVendorName, transactionTotal);
+        } else {
+            System.out.printf("No transactions found for vendor: %s\n", userVendorName);
+        }
+    }
+
+    private static void showPreviousYearReport() {
+        ArrayList<Transaction> transactions = loadTransactions();
+
+        LocalDate now = LocalDate.now();
+        int previousYear = now.getYear() - 1;
+        LocalDate startOfPreviousYear = LocalDate.ofYearDay(previousYear, 1);
+        LocalDate endOfPreviousYear = LocalDate.of(previousYear, 12, 31);
+
+        boolean transactionFound = false;
+        double transactionTotal = 0;
+        int transactionCount = 0;
+
+        System.out.printf("===Report for %d===\n",previousYear);
+        for (Transaction item : transactions) {
+            if (item.getDate().isAfter(startOfPreviousYear) && item.getDate().isBefore(endOfPreviousYear)) {
+                System.out.println(item);
+                transactionTotal += item.getAmount();
+                transactionCount ++;
+                transactionFound = true;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfPreviousYear, endOfPreviousYear);
+            System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
+        } else {
+            System.out.printf("No transactions found from %s - %s\n", startOfPreviousYear,endOfPreviousYear);
+        }
+    }
+
+    private static void showYTDReport() {
+        ArrayList<Transaction> transactions = loadTransactions();
+        LocalDate now = LocalDate.now();
+        LocalDate startOfYear = now.withDayOfYear(1);
+        double transactionTotal = 0;
+        int transactionCount = 0;
+        boolean transactionFound = false;
+
+        System.out.printf("===Report for %s to %s===",startOfYear,now);
+        for (Transaction item : transactions) {
+            if (item.getDate().isAfter(startOfYear) && item.getDate().isBefore(now)) {
+                System.out.println(item);
+                transactionTotal += item.getAmount();
+                transactionCount ++;
+                transactionFound = true;
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfYear, now);
+            System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
+        } else {
+            System.out.printf("No transactions found from %s - %s\n", startOfYear, now);
+        }
+    }
+
+    private static void showPreviousMonthReport() {
+        ArrayList<Transaction> transactions = loadTransactions();
+        LocalDate now = LocalDate.now();
+        LocalDate startOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1); //finds the first day of current month minus 1
+        LocalDate endOfPreviousMonth = now.withDayOfMonth(1).minusDays(1); // finds the last day by subtracting current day by 1
+        boolean transactionFound = false;
+        int transactionCount = 0;
+        double tranactionTotal = 0;
+
+        System.out.printf("===Report for %s to %s===\n",startOfPreviousMonth,endOfPreviousMonth);
+        for (Transaction item : transactions) {
+            if (item.getDate().isAfter(startOfPreviousMonth) && item.getDate().isBefore(endOfPreviousMonth)) {
+                System.out.println(item);
+                transactionFound = true;
+                transactionCount ++;
+                tranactionTotal += item.getAmount();
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("%d transactions found from %s - %s\n", transactionCount, startOfPreviousMonth, endOfPreviousMonth);
+            System.out.printf("Transaction sum during this time period: $%.2f", tranactionTotal);
+        } else {
+            System.out.printf("No transactions from from %s - %s\n",startOfPreviousMonth,endOfPreviousMonth);
+        }
+    }
+
+    private static void showMonthToDateReport() {
+        ArrayList<Transaction> transactions = loadTransactions();
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1); //finds the first day of the current month
+        boolean transactionFound = false;
+        int transactionCount = 0;
+        double transactionTotal = 0;
+
+        System.out.printf("===Report for %s to %s\n", startOfMonth, now);
+        for (Transaction item : transactions) {
+            LocalDate transactionDate = item.getDate();
+            if (transactionDate.isAfter(startOfMonth) && transactionDate.isBefore(now)) {
+                System.out.println(item);
+                transactionFound = true;
+                transactionCount ++;
+                transactionTotal += item.getAmount();
+            }
+        }
+        if (transactionFound) {
+            System.out.printf("%d transactions found from %s - %s\n", transactionCount, startOfMonth, now);
+            System.out.printf("Transaction sum during this time period: $%.2f\n",transactionTotal);
+        } else {
+            System.out.printf("No transactions from from %s - %s\n",startOfMonth,now);
         }
     }
 
