@@ -1,4 +1,4 @@
-# DolFin
+# DolFin 🐬
 ## The only finance app you'll ever need
 
 ### What is DolFin?
