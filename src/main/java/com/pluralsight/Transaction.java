@@ -59,7 +59,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public String toCSV() {
+    public String toCSV() { //Updating the CSV with new inputs
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
@@ -68,10 +68,10 @@ public class Transaction {
 
     @Override
     public String toString() {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy"); //shows as 3 letter month day, year
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a"); //converting from 24 time to 12 and showing am or pm
 
-        return date.format(dateFormatter) + "," + time.format(timeFormatter) + "," + description + "," + vendor + ",$" + amount;
+        return date.format(dateFormatter) + " at " + time.format(timeFormatter) + ". " + description + ", " + vendor + " ,$" + amount;
     }
 
 }
