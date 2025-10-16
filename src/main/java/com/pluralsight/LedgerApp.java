@@ -12,17 +12,21 @@ public class LedgerApp {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"));
-        getUserPassAndRunApp(scanner, running, buffReader);
+//        getUserPassAndRunApp();
+        if (getUserPassAndRunApp(scanner)) {
+            runMainApplication(running, scanner, buffReader);
+        }
+
     }
 
-    private static void getUserPassAndRunApp(Scanner scanner, boolean running, BufferedReader buffReader) throws IOException {
+    private static boolean getUserPassAndRunApp(Scanner scanner) throws IOException {
         String realPassword = "password123four";
         String passwordHint = "No hints for you";
         int maxAttempts = 3;
         int passwordAttempts = 0;
         boolean accessGranted = false;
 
-        System.out.println("Welcome to ^DolFin^, your personal finance tracker\n");
+        System.out.println("\nWelcome to ^DolFin^, your personal finance tracker\n");
         while (maxAttempts > passwordAttempts && !accessGranted) {
             System.out.println("Please enter your password(case sensitive). Or ask for a hint: \n");
             String userPasswordEntry = scanner.nextLine();
@@ -34,12 +38,12 @@ public class LedgerApp {
             } else {
                 System.out.println("Access Granted");
                 accessGranted = true;
-                runMainApplication(running, scanner, buffReader);
             }
         }
         if (!accessGranted) {
             System.out.println("Too many failed attempts. Locking down program now");
         }
+        return accessGranted;
     }
 
 
@@ -79,13 +83,16 @@ public class LedgerApp {
                         byte userLedgerOption = scanner.nextByte();
                         switch (userLedgerOption) {
                             case 1 -> {
-                                showAllEntries(buffReader);
+                                showAllEntries();
+                                ledgerRunning = false;
                             }
                             case 2 -> {
                                 showDeposits();
+                                ledgerRunning = false;
                             }
                             case 3 -> {
                                 showPayments();
+                                ledgerRunning = false;
                             }
                             case 4 -> {
                                 System.out.println("""
@@ -124,8 +131,24 @@ public class LedgerApp {
                                             getSearchByVendor(scanner);
                                             reportsRunning = false;
                                         }
-                                        case 6 -> {
-
+                                        case 6 -> { // custom search
+                                            System.out.println("===Custom Search===\n");
+                                            System.out.println("""
+                                                    Select a Search Option
+                                                    1. Search by Date Range
+                                                    2. Search by Description
+                                                    3. Search by Amount
+                                                    4. Exit Custom Search
+                                                    """);
+                                            byte userCustomSearch = scanner.nextByte();
+                                            switch (userCustomSearch) {
+                                                case 1 -> {
+                                                    System.out.println("Enter Start Date (yyyy-MM-dd): ");
+                                                    LocalDate startDate = LocalDate.parse(scanner.nextLine());
+                                                    System.out.println();
+                                                }
+                                            }
+                                            reportsRunning = false;
                                         }
                                         case 7 -> {
                                             reportsRunning = false;
@@ -317,17 +340,18 @@ public class LedgerApp {
         System.out.printf("You have %d deposits totaling $%.2f.\n\n",depositLength, depositSum);
     }
 
-    private static void showAllEntries(BufferedReader buffReader) throws IOException {
-        String line;
-        while ((line = buffReader.readLine()) != null) {
-            if (line.contains(",")) {
-                System.out.println(line);
-            } else {
-                String commaLine = line.replace("|", ",");
-                System.out.println(commaLine);
+    private static void showAllEntries() throws IOException {
+        try (BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"))){
+            String line;
+            while ((line = buffReader.readLine()) != null) {
+                if (line.contains(",")) {
+                    System.out.println(line);
+                } else {
+                    String commaLine = line.replace("|", ",");
+                    System.out.println(commaLine);
+                }
             }
         }
-        buffReader.close();
     }
 
     private static void addPayment(Scanner scanner) {
@@ -384,13 +408,12 @@ public class LedgerApp {
         // Write to file
         saveTransaction(transaction);
 
-        System.out.printf("$%.2f has been saved as a deposit to your account from %s for %s\n", userDepositAmount, userDepositVendor, userDepositDescription);
+        System.out.printf("$%.2f has been saved as a deposit to your account to %s for %s\n", userDepositAmount, userDepositVendor, userDepositDescription);
     }
 
     private static void saveTransaction(Transaction transaction) {
         try (BufferedWriter buffWriter = new BufferedWriter(new FileWriter("transactions.csv", true))) {
-            buffWriter.write(transaction.toCSV());
-            buffWriter.newLine();
+            buffWriter.write("\n"+ transaction.toCSV());
         } catch (IOException e) {
             System.out.println("Error saving transaction to CSV");
         }
