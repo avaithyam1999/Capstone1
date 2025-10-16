@@ -47,8 +47,9 @@ public class LedgerApp {
 
 
     private static void runMainApplication(boolean running, Scanner scanner, BufferedReader buffReader) throws IOException {
-        while (running) {
+        mainLoop: while (running) {
             System.out.println("""
+                    
                     ===DolFin===
                     Select an option:
                     1. Record a deposit
@@ -68,8 +69,9 @@ public class LedgerApp {
                 }
                 case 3 -> {
                     boolean ledgerRunning = true;
-                    while (ledgerRunning) {
+                    ledgerLoop: while (ledgerRunning) {
                         System.out.println("""
+                            
                             ===Ledger===
                             Select an option:
                             1. Show all Entries
@@ -80,6 +82,7 @@ public class LedgerApp {
                             6. Exit DolFin
                             """);
                         byte userLedgerOption = scanner.nextByte();
+                        scanner.nextLine();
                         switch (userLedgerOption) {
                             case 1 -> {
                                 showAllEntries();
@@ -94,21 +97,24 @@ public class LedgerApp {
                                 ledgerRunning = false;
                             }
                             case 4 -> {
-                                System.out.println("""
-                                    ===Reports===
-                                    Select an Option to view by:
-                                    1. Month to Date
-                                    2. Previous Month
-                                    3. Year to Date
-                                    4. Previous Year
-                                    5. Search by Vendor
-                                    6. Custom Search
-                                    7. Go Back to Ledger Menu
-                                    """);
-                                byte userReportInput = scanner.nextByte();
-                                scanner.nextLine();
                                 boolean reportsRunning = true;
-                                while (reportsRunning) {
+
+                                reportLoop : while (reportsRunning) {
+                                    System.out.println("""
+                                        
+                                        ===Reports===
+                                        Select an Option to view by:
+                                        1. Month to Date
+                                        2. Previous Month
+                                        3. Year to Date
+                                        4. Previous Year
+                                        5. Search by Vendor
+                                        6. Custom Search
+                                        7. Go Back to Ledger Menu
+                                        """);
+                                    byte userReportInput = scanner.nextByte();
+                                    scanner.nextLine();
+
                                     switch (userReportInput) {
                                         case 1 -> {
                                             showMonthToDateReport();
@@ -131,49 +137,56 @@ public class LedgerApp {
                                             reportsRunning = false;
                                         }
                                         case 6 -> { // custom search
-                                            System.out.println("===Custom Search===\n");
                                             System.out.println("""
+                                                    
+                                                    ===Custom Search===
                                                     Select a Search Option
                                                     1. Search by Date Range
                                                     2. Search by Description
                                                     3. Search by Amount
-                                                    4. Return to Ledger Menu
-                                                    5. Return to Main Menu
-                                                    6. Exit Program
+                                                    4. Return to Report Menu
+                                                    5. Return to Ledger Menu
+                                                    6. Return to Main Menu
+                                                    7. Exit Program
                                                     """);
                                             byte userCustomSearchChoice = scanner.nextByte();
                                             scanner.nextLine();
                                             boolean customSearchRunning = true;
 
-                                            while (customSearchRunning) {
+                                            customSearchLoop : while (customSearchRunning) {
                                                 ArrayList<Transaction> transactions = loadTransactions();
                                                 switch (userCustomSearchChoice) {
                                                     case 1 -> {
                                                         searchByDate(scanner, transactions);
+                                                        break customSearchLoop;
                                                     }
                                                     case 2 -> {
                                                         searchByDescription(scanner, transactions);
+                                                        break customSearchLoop;
                                                     }
                                                     case 3 -> {
                                                         searchByAmount(scanner, transactions);
+                                                        break customSearchLoop;
                                                     }
                                                     case 4 -> {
-                                                        System.out.println("Returning to Ledger Menu");
-                                                        customSearchRunning = false;
+                                                        System.out.println("Returning to Report Menu");
+                                                        break customSearchLoop;
                                                     }
                                                     case 5 -> {
-                                                        System.out.println("Returning to Main Menu");
-                                                        customSearchRunning = false;
-                                                        ledgerRunning = false;
+                                                        System.out.println("Returning to Ledger Menu");
+                                                        break reportLoop;
                                                     }
                                                     case 6 -> {
+                                                        System.out.println("Returning to Main Menu");
+                                                        break ledgerLoop;
+                                                    }
+                                                    case 7 -> {
                                                         System.out.println("Exiting DolFin");
-                                                        customSearchRunning = false;
-                                                        ledgerRunning = false;
-                                                        running = false;
+                                                        break mainLoop;
                                                     }
                                                     default -> {
                                                         System.out.println("That's an invalid entry.");
+                                                        customSearchRunning = false;
                                                     }
                                                 }
                                             }
