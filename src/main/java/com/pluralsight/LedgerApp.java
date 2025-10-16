@@ -25,6 +25,24 @@ public class LedgerApp {
         int passwordAttempts = 0;
         boolean accessGranted = false;
 
+        System.out.println("                                       .--.\n" +
+                "                _______             .-\"  .'\n" +
+                "        .---u\"\"\"       \"\"\"\"---._  .\"    %\n" +
+                "      .'                        \"--.    %\n" +
+                " __.--'  o                          \"\".. \"\n" +
+                "(____.                                  \":\n" +
+                " `----.__                                 \".\n" +
+                "         `----------__                     \".\n" +
+                "               \".   . \"\"--.                 \".\n" +
+                "                 \". \". bIt \"\"-.              \".\n" +
+                "                   \"-.)        \"\"-.           \".\n" +
+                "                                   \"\".         \".\n" +
+                "                                      \"\".       \".\n" +
+                "                                         \"\".      \".\n" +
+                "                                            \"\".    \".\n" +
+                "                      ^~^~^~^~^~^~^~^~^~^~^~^~^\"\".  \"^~^~^~^~^\n" +
+                "                                            ^~^~^~^  ~^~\n" +
+                "                                                 ^~^~^~");
         System.out.println("\nWelcome to ^DolFin^, your personal finance tracker\n");
         while (maxAttempts > passwordAttempts && !accessGranted) {
             System.out.println("Please enter your password(case sensitive). Or ask for a hint: \n");
@@ -474,7 +492,7 @@ public class LedgerApp {
             userPaymentDescription = scanner.nextLine();
             System.out.println("Who would you like to send the payment to: ");
             userPaymentVendor = scanner.nextLine();
-            System.out.println("How much would you like to deposit?");
+            System.out.println("How much would you like to send as a Payment?");
             userPaymentAmount = scanner.nextDouble();
             scanner.nextLine();
             transaction = new Transaction(LocalDate.now(),

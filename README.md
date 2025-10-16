@@ -22,7 +22,7 @@ In the vast market of financial apps, what you can find with DolFin but not our 
 We use a highly complex authentication process where the user will be prompted to enter a password. Without the password, 
 there is no getting around to the data being safely stored in our **private** servers
 
-Don't believe us? Take a look at one of highly secure algorithms for gaining access to the application's info.
+Don't believe us? Take a look behind the scenes, at one of highly secure algorithms for gaining access to the application's info.
 ``` java 
 System.out.println("\nWelcome to ^DolFin^, your personal finance tracker\n");
         while (maxAttempts > passwordAttempts && !accessGranted) {
