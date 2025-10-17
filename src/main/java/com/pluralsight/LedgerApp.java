@@ -476,7 +476,7 @@ public class LedgerApp {
             entriesSum += item.getAmount();
             System.out.println(item);
         }
-        System.out.printf("\nYou have %d entries in total, with a net balance of $%.2f",entriesLength,entriesSum);
+        System.out.printf("\nYou have %d entries in total, with a net balance of $%.2f\n",entriesLength,entriesSum);
     }
 
     private static void addPayment(Scanner scanner) {
