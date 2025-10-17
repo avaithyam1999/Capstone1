@@ -347,7 +347,7 @@ public class LedgerApp {
         }
         if (transactionFound) {
             System.out.printf("\n%d transactions found from %s to %s\n", transactionCount, startOfPreviousYear, endOfPreviousYear);
-            System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
+            System.out.printf("Transaction sum during this time period: $%.2f\n", transactionTotal);
         } else {
             System.out.printf("\nNo transactions found from %s - %s\n", startOfPreviousYear,endOfPreviousYear);
         }
@@ -372,7 +372,7 @@ public class LedgerApp {
         }
         if (transactionFound) {
             System.out.printf("\n%d transactions found from %s to %s\n", transactionCount, startOfYear, now);
-            System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
+            System.out.printf("Transaction sum during this time period: $%.2f\n", transactionTotal);
         } else {
             System.out.printf("\nNo transactions found from %s - %s\n", startOfYear, now);
         }
@@ -442,7 +442,7 @@ public class LedgerApp {
                 paymentSum += Math.abs(item.getAmount());
             }
         }
-        System.out.printf("You have %d payments totaling $%.2f\n\n",paymentLength,paymentSum);
+        System.out.printf("\nYou have %d payments totaling $%.2f\n\n",paymentLength,paymentSum);
     }
 
     private static void showDeposits() {
