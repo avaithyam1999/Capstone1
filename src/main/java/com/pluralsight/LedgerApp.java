@@ -215,9 +215,8 @@ public class LedgerApp {
                                 System.out.println("Going back to DolFin Main Menu");
                                 break ledgerLoop;
                             }
-                            case 6 -> {
-                                System.out.println("Thanks for using this awesome app! Have a great day and goodbye!");
-                                break ledgerLoop;
+                            default -> {
+                                System.out.println("Invalid entry.");
                             }
                         }
                     }
