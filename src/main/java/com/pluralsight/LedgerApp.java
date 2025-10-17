@@ -318,9 +318,9 @@ public class LedgerApp {
             }
         }
         if (transactionFound) {
-            System.out.printf("%d transactions found for vendor: %s \nTotal of transactions: $%.2f\n", transactionCount, userVendorName, transactionTotal);
+            System.out.printf("\n%d transactions found for vendor: %s \nTotal of transactions: $%.2f\n", transactionCount, userVendorName, transactionTotal);
         } else {
-            System.out.printf("No transactions found for vendor: %s\n", userVendorName);
+            System.out.printf("\nNo transactions found for vendor: %s\n", userVendorName);
         }
     }
 
@@ -346,10 +346,10 @@ public class LedgerApp {
             }
         }
         if (transactionFound) {
-            System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfPreviousYear, endOfPreviousYear);
+            System.out.printf("\n%d transactions found from %s to %s\n", transactionCount, startOfPreviousYear, endOfPreviousYear);
             System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
         } else {
-            System.out.printf("No transactions found from %s - %s\n", startOfPreviousYear,endOfPreviousYear);
+            System.out.printf("\nNo transactions found from %s - %s\n", startOfPreviousYear,endOfPreviousYear);
         }
     }
 
@@ -371,10 +371,10 @@ public class LedgerApp {
             }
         }
         if (transactionFound) {
-            System.out.printf("%d transactions found from %s to %s\n", transactionCount, startOfYear, now);
+            System.out.printf("\n%d transactions found from %s to %s\n", transactionCount, startOfYear, now);
             System.out.printf("Transaction sum during this time period: %.2f\n", transactionTotal);
         } else {
-            System.out.printf("No transactions found from %s - %s\n", startOfYear, now);
+            System.out.printf("\nNo transactions found from %s - %s\n", startOfYear, now);
         }
     }
 
@@ -397,10 +397,10 @@ public class LedgerApp {
             }
         }
         if (transactionFound) {
-            System.out.printf("%d transactions found from %s - %s\n", transactionCount, startOfPreviousMonth, endOfPreviousMonth);
+            System.out.printf("\n%d transactions found from %s - %s\n", transactionCount, startOfPreviousMonth, endOfPreviousMonth);
             System.out.printf("Transaction sum during this time period: $%.2f", tranactionTotal);
         } else {
-            System.out.printf("No transactions from from %s - %s\n",startOfPreviousMonth,endOfPreviousMonth);
+            System.out.printf("\nNo transactions from from %s - %s\n",startOfPreviousMonth,endOfPreviousMonth);
         }
     }
 
@@ -423,10 +423,10 @@ public class LedgerApp {
             }
         }
         if (transactionFound) {
-            System.out.printf("%d transactions found from %s - %s\n", transactionCount, startOfMonth, now);
+            System.out.printf("\n%d transactions found from %s - %s\n", transactionCount, startOfMonth, now);
             System.out.printf("Transaction sum during this time period: $%.2f\n",transactionTotal);
         } else {
-            System.out.printf("No transactions from from %s - %s\n",startOfMonth,now);
+            System.out.printf("\nNo transactions from from %s - %s\n",startOfMonth,now);
         }
     }
 
@@ -457,10 +457,12 @@ public class LedgerApp {
                 depositSum += item.getAmount();
             }
         }
-        System.out.printf("You have %d deposits totaling $%.2f.\n\n",depositLength, depositSum);
+        System.out.printf("\nYou have %d deposits totaling $%.2f.\n\n",depositLength, depositSum);
     }
 
     private static void showAllEntries() {
+        int entriesLength = 0;
+        double entriesSum = 0;
         ArrayList<Transaction> transactions = loadTransactions();
 
         if (transactions.isEmpty()) {
@@ -469,10 +471,12 @@ public class LedgerApp {
         }
 
         System.out.println("\n===All Entries===");
-        for (Transaction t : transactions) {
-            System.out.println(t);
+        for (Transaction item : transactions) {
+            entriesLength ++;
+            entriesSum += item.getAmount();
+            System.out.println(item);
         }
-        System.out.println();
+        System.out.printf("\nYou have %d entries in total, with a net balance of $%.2f",entriesLength,entriesSum);
     }
 
     private static void addPayment(Scanner scanner) {

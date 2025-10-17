@@ -47,7 +47,7 @@ public class Transaction {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy"); //shows as 3 letter month day, year
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a"); //converting from 24 time to 12 and showing am or pm
 
-        return date.format(dateFormatter) + " at " + time.format(timeFormatter) + ". " + description + " - " + vendor.toUpperCase() + ":$" + amount;
+        return date.format(dateFormatter) + " at " + time.format(timeFormatter) + ". " + description + " - " + vendor.toUpperCase() + ": $" + amount;
     }
 
 }
