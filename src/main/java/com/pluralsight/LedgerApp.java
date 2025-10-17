@@ -10,15 +10,13 @@ import java.util.Scanner;
 public class LedgerApp {
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        boolean running = true;
-        BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"));
         if (getUserPassAndRunApp(scanner)) {
-            runMainApplication(running, scanner, buffReader);
+            runMainApplication(scanner);
         }
 
     }
 
-    private static boolean getUserPassAndRunApp(Scanner scanner) throws IOException {
+    private static boolean getUserPassAndRunApp(Scanner scanner) {
         String realPassword = "password123four";
         String passwordHint = "No hints for you";
         int maxAttempts = 3;
@@ -64,8 +62,8 @@ public class LedgerApp {
     }
 
 
-    private static void runMainApplication(boolean running, Scanner scanner, BufferedReader buffReader) throws IOException {
-        mainLoop: while (running) {
+    private static void runMainApplication(Scanner scanner) {
+        mainLoop: while (true) {
             System.out.println("""
                     
                     ===DolFin===
@@ -78,6 +76,7 @@ public class LedgerApp {
 
             byte userChoice = (scanner.nextByte());
             scanner.nextLine();
+
             switch (userChoice) {
                 case 1 -> {
                     addDeposit(scanner);
@@ -86,8 +85,7 @@ public class LedgerApp {
                     addPayment(scanner);
                 }
                 case 3 -> {
-                    boolean ledgerRunning = true;
-                    ledgerLoop: while (ledgerRunning) {
+                    ledgerLoop: while (true) {
                         System.out.println("""
                             
                             ===Ledger===
@@ -97,22 +95,18 @@ public class LedgerApp {
                             3. Show only Payments
                             4. View Reports
                             5. Exit to Main Menu
-                            6. Exit DolFin
                             """);
                         byte userLedgerOption = scanner.nextByte();
                         scanner.nextLine();
                         switch (userLedgerOption) {
                             case 1 -> {
                                 showAllEntries();
-                                ledgerRunning = false;
                             }
                             case 2 -> {
                                 showDeposits();
-                                ledgerRunning = false;
                             }
                             case 3 -> {
                                 showPayments();
-                                ledgerRunning = false;
                             }
                             case 4 -> {
                                 boolean reportsRunning = true;
@@ -199,7 +193,7 @@ public class LedgerApp {
                                                         break ledgerLoop;
                                                     }
                                                     case 7 -> {
-                                                        System.out.println("Exiting DolFin");
+                                                        System.out.println("Exiting DolFin. Thanks for using my App!");
                                                         break mainLoop;
                                                     }
                                                     default -> {
@@ -211,7 +205,7 @@ public class LedgerApp {
 
                                         }
                                         case 7 -> {
-                                            reportsRunning = false;
+                                            break reportLoop;
                                         }
                                         default -> System.out.println("You didn't enter a proper value");
                                     }
@@ -219,19 +213,18 @@ public class LedgerApp {
                             }
                             case 5 -> {
                                 System.out.println("Going back to DolFin Main Menu");
-                                ledgerRunning = false;
+                                break ledgerLoop;
                             }
                             case 6 -> {
                                 System.out.println("Thanks for using this awesome app! Have a great day and goodbye!");
-                                ledgerRunning = false;
-                                running = false;
+                                break ledgerLoop;
                             }
                         }
                     }
                 }
                 case 4 -> {
                     System.out.println("Thanks for using this awesome app! Have a great day and goodbye!");
-                    running = false;
+                    break mainLoop;
                 }
                 default -> {
                     System.out.println("Number is invalid or out of range");
@@ -467,18 +460,19 @@ public class LedgerApp {
         System.out.printf("You have %d deposits totaling $%.2f.\n\n",depositLength, depositSum);
     }
 
-    private static void showAllEntries() throws IOException {
-        try (BufferedReader buffReader = new BufferedReader(new FileReader("transactions.csv"))){
-            String line;
-            while ((line = buffReader.readLine()) != null) {
-                if (line.contains(",")) {
-                    System.out.println(line);
-                } else {
-                    String commaLine = line.replace("|", ",");
-                    System.out.println(commaLine);
-                }
-            }
+    private static void showAllEntries() {
+        ArrayList<Transaction> transactions = loadTransactions();
+
+        if (transactions.isEmpty()) {
+            System.out.println("\nNo transactions found.");
+            return;
         }
+
+        System.out.println("\n===All Entries===");
+        for (Transaction t : transactions) {
+            System.out.println(t);
+        }
+        System.out.println();
     }
 
     private static void addPayment(Scanner scanner) {

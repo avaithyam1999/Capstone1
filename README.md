@@ -43,4 +43,11 @@ System.out.println("\nWelcome to ^DolFin^, your personal finance tracker\n");
         }
         return accessGranted;
 ```
-
+### Show me the proof.
+Fine, I understand that in today's day and age it's expected to be a little skeptical. Just to be nice, I put a picture 
+of what it'll look like when you try to get in without knowing the password. 
+![failed password attempt](failedPassword.png)
+### What if I have the real password?
+Congrats, with the right password, you'll be able to make your way in and use the best finance app you've ever seen.
+Just so you can compare, here's what it'll look like once you enter the *right* password
+![successful password entered](successfulPassword.png)

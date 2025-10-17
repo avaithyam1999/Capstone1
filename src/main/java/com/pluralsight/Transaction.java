@@ -23,40 +23,16 @@ public class Transaction {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getVendor() {
         return vendor;
     }
 
-    public void setVendor(String vendor) {
-        this.vendor = vendor;
-    }
-
     public double getAmount() {
         return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 
     public String toCSV() { // use this format for appending to CSV
@@ -71,7 +47,7 @@ public class Transaction {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy"); //shows as 3 letter month day, year
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a"); //converting from 24 time to 12 and showing am or pm
 
-        return date.format(dateFormatter) + " at " + time.format(timeFormatter) + ". " + description + " - " + vendor.toUpperCase() + " - $" + amount;
+        return date.format(dateFormatter) + " at " + time.format(timeFormatter) + ". " + description + " - " + vendor.toUpperCase() + ":$" + amount;
     }
 
 }
